@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String              @id                         @default(cuid())
+  accountType           AccountType                                     @default(ADMIN)
+  image                 String              @db.LongText
+  firstName             String              @db.MediumText
+  lastName              String              @db.MediumText
+  address               String              @db.LongText
+  contactNo             String
+  email                 String
+  password              String
+  createdAt             DateTime            @db.DateTime(6)             @default(now())
+  updatedAt             DateTime            @db.DateTime(6)             @default(now())
+  crops                 Crops[]
+  programs              Program[]
+  reports               Report[]
+  notificationFrom      Notification[]                                  @relation("notificationFrom")
+  notificationTo        Notification[]                                  @relation("notificationTo")
+}
+
+model Crops {
+  id                    String              @id                         @default(cuid())
+  image                 String              @db.LongText
+  name                  String              @db.MediumText
+  description           String              @db.LongText
+  temperature           String        
+  createdAt             DateTime            @db.DateTime(6)             @default(now())
+  updatedAt             DateTime            @db.DateTime(6)             @default(now())
+  user                  User                                            @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId                String
+
+  @@index([userId])
+}
+
+model Program {
+  id                    String              @id                         @default(cuid())
+  title                 String              @db.MediumText
+  description           String              @db.LongText
+  createdAt             DateTime            @db.DateTime(6)             @default(now())
+  updatedAt             DateTime            @db.DateTime(6)             @default(now())
+  user                  User                                            @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId                String
+
+  @@index([userId])
+}
+
+model Report {
+  id                    String              @id                         @default(cuid())
+  type                  ReportType
+  description           String              @db.LongText
+  createdAt             DateTime            @db.DateTime(6)             @default(now())
+  updatedAt             DateTime            @db.DateTime(6)             @default(now())
+  user                  User                                            @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId                String
+
+  @@index([userId])
+}
+
+model Notification {
+  id                    String              @id                         @default(cuid())
+  type                  NotificationType
+  read                  Boolean                                         @default(false)
+  message               String              @db.LongText
+  createdAt             DateTime            @db.DateTime(6)             @default(now())
+  updatedAt             DateTime            @db.DateTime(6)             @default(now())
+  notificationFrom      User?                                           @relation("notificationFrom", fields: [notificationFromId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  notificationFromId    String
+  notificationTo        User?                                           @relation("notificationTo", fields: [notificationToId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  notificationToId      String
+}
+
+enum AccountType {
+  ADMIN
+  FARMERS
+  LGU_NGO
+}
+
+enum ReportType {
+  FARMERS
+  LGU_NGO
+}
+
+enum NotificationType {
+  WEATHER
+  SUGGESTED_CROPS
+  VIEW_PROGRAMS
+}

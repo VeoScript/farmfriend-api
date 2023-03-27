@@ -12,21 +12,22 @@ datasource db {
 
 model User {
   id                    String              @id                         @default(cuid())
-  accountType           AccountType                                     @default(ADMIN)
-  image                 String              @db.LongText
-  firstName             String              @db.MediumText
-  lastName              String              @db.MediumText
+  account_type          AccountType                                     @default(ADMIN)
+  image                 String?             @db.LongText
+  first_name            String              @db.MediumText
+  last_name             String              @db.MediumText
   address               String              @db.LongText
-  contactNo             String
+  contact_num           String
   email                 String
   password              String
-  createdAt             DateTime            @db.DateTime(6)             @default(now())
-  updatedAt             DateTime            @db.DateTime(6)             @default(now())
+  created_at            DateTime            @db.DateTime(6)             @default(now())
+  updated_at            DateTime            @db.DateTime(6)             @default(now())
   crops                 Crops[]
   programs              Program[]
   reports               Report[]
-  notificationFrom      Notification[]                                  @relation("notificationFrom")
-  notificationTo        Notification[]                                  @relation("notificationTo")
+  rates                 Rates[]
+  notification_from     Notification[]                                  @relation("notification_from")
+  notification_to       Notification[]                                  @relation("notification_to")
 }
 
 model Crops {
@@ -35,36 +36,47 @@ model Crops {
   name                  String              @db.MediumText
   description           String              @db.LongText
   temperature           String        
-  createdAt             DateTime            @db.DateTime(6)             @default(now())
-  updatedAt             DateTime            @db.DateTime(6)             @default(now())
-  user                  User                                            @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  userId                String
+  created_at            DateTime            @db.DateTime(6)             @default(now())
+  updated_at            DateTime            @db.DateTime(6)             @default(now())
+  user                  User                                            @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user_id               String
 
-  @@index([userId])
+  @@index([user_id])
 }
 
 model Program {
   id                    String              @id                         @default(cuid())
   title                 String              @db.MediumText
   description           String              @db.LongText
-  createdAt             DateTime            @db.DateTime(6)             @default(now())
-  updatedAt             DateTime            @db.DateTime(6)             @default(now())
-  user                  User                                            @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  userId                String
+  created_at            DateTime            @db.DateTime(6)             @default(now())
+  updated_at            DateTime            @db.DateTime(6)             @default(now())
+  user                  User                                            @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user_id               String
 
-  @@index([userId])
+  @@index([user_id])
 }
 
 model Report {
   id                    String              @id                         @default(cuid())
   type                  ReportType
   description           String              @db.LongText
-  createdAt             DateTime            @db.DateTime(6)             @default(now())
-  updatedAt             DateTime            @db.DateTime(6)             @default(now())
-  user                  User                                            @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  userId                String
+  created_at            DateTime            @db.DateTime(6)             @default(now())
+  updated_at            DateTime            @db.DateTime(6)             @default(now())
+  user                  User                                            @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user_id               String
 
-  @@index([userId])
+  @@index([user_id])
+}
+
+model Rates {
+  id                    String              @id                         @default(cuid())
+  number                Int
+  created_at            DateTime            @db.DateTime(6)             @default(now())
+  updated_at            DateTime            @db.DateTime(6)             @default(now())
+  user                  User                                            @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user_id               String
+
+  @@index([user_id])
 }
 
 model Notification {
@@ -72,12 +84,12 @@ model Notification {
   type                  NotificationType
   read                  Boolean                                         @default(false)
   message               String              @db.LongText
-  createdAt             DateTime            @db.DateTime(6)             @default(now())
-  updatedAt             DateTime            @db.DateTime(6)             @default(now())
-  notificationFrom      User?                                           @relation("notificationFrom", fields: [notificationFromId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  notificationFromId    String
-  notificationTo        User?                                           @relation("notificationTo", fields: [notificationToId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  notificationToId      String
+  created_at            DateTime            @db.DateTime(6)             @default(now())
+  updated_at            DateTime            @db.DateTime(6)             @default(now())
+  notification_from     User?                                           @relation("notification_from", fields: [notification_from_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  notification_from_id  String
+  notification_to       User?                                           @relation("notification_to", fields: [notification_to_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  notification_to_id    String
 }
 
 enum AccountType {

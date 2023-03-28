@@ -27,5 +27,6 @@ router.post('/logout', session, AuthController.logout)
 router.put('/update-account/:id', session, UserController.updateAccount)
 router.put('/change-profile/:id', session, UserController.changeProfile)
 router.put('/change-password/:id', session, UserController.changePassword)
+router.put('/delete-account/:id', session, UserController.deleteAccount)
 
 module.exports = router;

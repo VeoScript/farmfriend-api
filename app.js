@@ -36,4 +36,4 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => console.log(`🚀 Server is running in port ${PORT}`));
+server.listen(PORT, () => console.log(`🚀 Server is running in http://localhost:${PORT}`));

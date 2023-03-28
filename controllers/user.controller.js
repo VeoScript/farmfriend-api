@@ -68,7 +68,7 @@ class UserController {
     }
     
     try {
-      const { oldPassword, newPassword } = req.body
+      const { old_password, new_password } = req.body
   
       const foundUser = await prisma.user.findMany({
         where: {
@@ -87,7 +87,7 @@ class UserController {
       }
       const userHashPassword = foundUser[0].password
 
-      const matchedPassword = await bcrypt.compare(oldPassword, userHashPassword)
+      const matchedPassword = await bcrypt.compare(old_password, userHashPassword)
 
       if (!matchedPassword) {
         return res.status(400).json({
@@ -96,7 +96,7 @@ class UserController {
       }
 
       const salt = await bcrypt.genSalt()
-      const hashPassword = await bcrypt.hash(newPassword, salt)
+      const hashPassword = await bcrypt.hash(new_password, salt)
       
       const updatePassword = await prisma.user.update({
         where: {
@@ -113,6 +113,55 @@ class UserController {
       process.exit(1)
     }
   };
+
+  static deleteAccount = async (req, res, next) => {
+    if (req.session.user === undefined) {
+      res.status(401).json({
+        message: 'Unauthorized!'
+      })
+      return
+    }
+
+    try {
+      const { user_password } = req.body
+
+      const foundUser = await prisma.user.findMany({
+        where: {
+          id: String(req.params.id)
+        },
+        select: {
+          id: true,
+          password: true
+        }
+      })
+  
+      if (!foundUser[0]) {
+        return res.status(400).json({
+          message: 'You are not logged in!'
+        })
+      }
+      
+      const userHashPassword = foundUser[0].password
+
+      const matchedPassword = await bcrypt.compare(user_password, userHashPassword)
+
+      if (!matchedPassword) {
+        return res.status(400).json({
+          message: 'Incorrect password'
+        })
+      }
+
+      const deleteAccount = await prisma.user.delete({
+        where: {
+          id: String(req.params.id)
+        }
+      })
+      res.status(200).json(deleteAccount)
+    } catch (e) {
+      next(createError(e.statusCode, e.message))
+      process.exit(1)
+    }
+  }
 };
 
 module.exports = UserController;

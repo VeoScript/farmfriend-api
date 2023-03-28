@@ -10,7 +10,8 @@ var session = ironSession({
   },
 });
 
-const AuthController = require('../controllers/auth.controller')
+const AuthController = require('../controllers/auth.controller');
+const UserController = require('../controllers/user.controller');
 
 router.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
@@ -21,5 +22,10 @@ router.get('/user', session, AuthController.user)
 router.post('/register', session, AuthController.register)
 router.post('/login', session, AuthController.login)
 router.post('/logout', session, AuthController.logout)
+
+// User Routes
+router.put('/update-account/:id', session, UserController.updateAccount)
+router.put('/change-profile/:id', session, UserController.changeProfile)
+router.put('/change-password/:id', session, UserController.changePassword)
 
 module.exports = router;

@@ -12,21 +12,26 @@ var session = ironSession({
 
 const AuthController = require('../controllers/auth.controller');
 const UserController = require('../controllers/user.controller');
+const ProgramsController = require('../controllers/programs.controller');
 
 router.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
 });
 
 // Authentication Routes
-router.get('/user', session, AuthController.user)
-router.post('/register', session, AuthController.register)
-router.post('/login', session, AuthController.login)
-router.post('/logout', session, AuthController.logout)
+router.get('/user', session, AuthController.user);
+router.post('/register', session, AuthController.register);
+router.post('/login', session, AuthController.login);
+router.post('/logout', session, AuthController.logout);
 
 // User Routes
-router.put('/update-account/:id', session, UserController.updateAccount)
-router.put('/change-profile/:id', session, UserController.changeProfile)
-router.put('/change-password/:id', session, UserController.changePassword)
-router.put('/delete-account/:id', session, UserController.deleteAccount)
+router.put('/update-account/:id', session, UserController.updateAccount);
+router.put('/change-profile/:id', session, UserController.changeProfile);
+router.put('/change-password/:id', session, UserController.changePassword);
+router.put('/delete-account/:id', session, UserController.deleteAccount);
+
+// Programs Routes
+router.get('/programs', session, ProgramsController.index);
+router.post('/create-program', session, ProgramsController.create);
 
 module.exports = router;

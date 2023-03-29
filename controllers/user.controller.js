@@ -6,6 +6,53 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class UserController {
+  static users = async (req, res, next) => {
+    if (req.session.user === undefined) {
+      res.status(401).json({
+        message: 'Unauthorized!'
+      })
+      return
+    }
+
+    const limit = 10
+    const cursor = req.query.cursor ?? ''
+    const cursorObj = cursor === '' ? undefined : { id: String(cursor) }
+
+    try {
+      const users = await prisma.user.findMany({
+        where: {
+          account_type: req.query.account_type,
+          OR: [
+            {
+              first_name: {
+                contains: req.query.search
+              }
+            },
+            {
+              last_name: {
+                contains: req.query.search
+              }
+            }
+          ]
+        },
+        orderBy: {
+          first_name: 'asc'
+        },
+        take: limit,
+        cursor: cursorObj,
+        skip: cursor === '' ? 0 : 1
+      })
+
+      res.status(200).json({
+        users,
+        nextId:  users.length === limit ? users[limit - 1].id : undefined
+      })
+    } catch (e) {
+      next(createError(e.statusCode, e.message))
+      process.exit(1)
+    }
+  }
+
   static updateAccount = async (req, res, next) => {
     if (req.session.user === undefined) {
       res.status(401).json({

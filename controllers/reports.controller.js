@@ -5,13 +5,13 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class ReportsController {
-	static index = async (req, res, next) => {
-		// if (req.session.user === undefined) {
-    //   res.status(401).json({
-    //     message: 'Unauthorized!'
-    //   })
-    //   return
-    // }
+  static index = async (req, res, next) => {
+    if (req.session.user === undefined) {
+      res.status(401).json({
+        message: 'Unauthorized!'
+      })
+      return
+    }
 
     const limit = 10
     const cursor = req.query.cursor ?? ''

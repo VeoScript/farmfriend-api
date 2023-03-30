@@ -13,6 +13,7 @@ var session = ironSession({
 const AuthController = require('../controllers/auth.controller');
 const UserController = require('../controllers/user.controller');
 const ProgramsController = require('../controllers/programs.controller');
+const ReportsController = require('../controllers/reports.controller');
 
 router.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
@@ -34,5 +35,9 @@ router.put('/delete-account/:id', session, UserController.deleteAccount);
 // Programs Routes
 router.get('/programs', session, ProgramsController.index);
 router.post('/create-program', session, ProgramsController.create);
+
+// Reports Routes
+router.get('/reports', session, ReportsController.index);
+router.post('/create-report', session, ReportsController.create);
 
 module.exports = router;

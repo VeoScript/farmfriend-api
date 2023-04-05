@@ -12,6 +12,7 @@ var session = ironSession({
 
 const AuthController = require('../controllers/auth.controller');
 const UserController = require('../controllers/user.controller');
+const CropsController = require('../controllers/crops.controller')
 const ProgramsController = require('../controllers/programs.controller');
 const ReportsController = require('../controllers/reports.controller');
 
@@ -31,6 +32,12 @@ router.put('/update-account/:id', session, UserController.updateAccount);
 router.put('/change-profile/:id', session, UserController.changeProfile);
 router.put('/change-password/:id', session, UserController.changePassword);
 router.put('/delete-account/:id', session, UserController.deleteAccount);
+
+// Crops Routes
+router.get('/crops', session, CropsController.index);
+router.get('/suggested-crops', session, CropsController.suggestedCrops);
+router.post('/create-crop', session, CropsController.create);
+router.put('/update-crop/:id', session, CropsController.update);
 
 // Programs Routes
 router.get('/programs', session, ProgramsController.index);

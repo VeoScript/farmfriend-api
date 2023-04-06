@@ -51,7 +51,13 @@ class CropsContoller {
     }
 
     try {
-      const suggestedCrops = await prisma.crops.findMany()
+      const suggestedCrops = await prisma.crops.findMany({
+        where: {
+          name: {
+            contains: req.query.search
+          }
+        }
+      })
       res.status(200).json(suggestedCrops)
     } catch (e) {
       next(createError(e.statusCode, e.message))

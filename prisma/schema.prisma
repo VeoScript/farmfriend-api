@@ -90,6 +90,8 @@ model Notification {
   notification_from_id  String
   notification_to       User?                                           @relation("notification_to", fields: [notification_to_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   notification_to_id    String
+
+  @@index([notification_from_id, notification_to_id])
 }
 
 enum AccountType {

@@ -70,7 +70,8 @@ model Report {
 
 model Rates {
   id                    String              @id                         @default(cuid())
-  number                Int
+  rate                  Float
+  feedback              String?             @db.LongText
   created_at            DateTime            @db.DateTime(6)             @default(now())
   updated_at            DateTime            @db.DateTime(6)             @default(now())
   user                  User                                            @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)

@@ -26,8 +26,7 @@ model User {
   programs              Program[]
   reports               Report[]
   rates                 Rates[]
-  notification_from     Notification[]                                  @relation("notification_from")
-  notification_to       Notification[]                                  @relation("notification_to")
+  notifications         Notification[]
 }
 
 model Crops {
@@ -85,14 +84,14 @@ model Notification {
   type                  NotificationType
   read                  Boolean                                         @default(false)
   message               String              @db.LongText
+  routeId               String
   created_at            DateTime            @db.DateTime(6)             @default(now())
   updated_at            DateTime            @db.DateTime(6)             @default(now())
-  notification_from     User?                                           @relation("notification_from", fields: [notification_from_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  notification_from     User?                                           @relation(fields: [notification_from_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   notification_from_id  String
-  notification_to       User?                                           @relation("notification_to", fields: [notification_to_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  notification_to_id    String
+  notification_to       NotificationAccountType
 
-  @@index([notification_from_id, notification_to_id])
+  @@index([notification_from_id])
 }
 
 enum AccountType {
@@ -106,8 +105,15 @@ enum ReportType {
   LGU_NGO
 }
 
+enum NotificationAccountType {
+  ALL
+  ADMIN
+  FARMERS
+  LGU_NGO
+}
+
 enum NotificationType {
-  WEATHER
-  SUGGESTED_CROPS
-  VIEW_PROGRAMS
+  ADD_CROPS
+  ADD_PROGRAMS
+  ADD_REPORTS
 }

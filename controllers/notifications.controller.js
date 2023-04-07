@@ -4,7 +4,7 @@ require('express-async-errors');
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-class ProgramsController {
+class NotificationsController {
   static index = async (req, res, next) => {
     if (req.session.user === undefined) {
       res.status(401).json({
@@ -18,11 +18,12 @@ class ProgramsController {
     const cursorObj = cursor === '' ? undefined : { id: String(cursor) }
 
     try {
-      const programs = await prisma.program.findMany({
+      const notifications = await prisma.notification.findMany({
         where: {
-          title: {
-            contains: req.query.search
-          }
+          OR: [
+            { notification_to: req.query.notification_to },
+            { notification_to: 'ALL' }
+          ]
         },
         orderBy: {
           created_at: 'desc'
@@ -33,16 +34,16 @@ class ProgramsController {
       })
 
       res.status(200).json({
-        programs,
-        nextId:  programs.length === limit ? programs[limit - 1].id : undefined
+        notifications,
+        nextId:  notifications.length === limit ? notifications[limit - 1].id : undefined
       })
     } catch (e) {
       next(createError(e.statusCode, e.message))
       process.exit(1)
     }
-  };
+	};
 
-  static show = async (req, res, next) => {
+  static unreadCount = async (req, res, next) => {
     if (req.session.user === undefined) {
       res.status(401).json({
         message: 'Unauthorized!'
@@ -51,50 +52,40 @@ class ProgramsController {
     }
 
     try {
-      const showProgram = await prisma.program.findFirst({
+      const unreadNotification = await prisma.notification.count({
+        where: {
+          read: false,
+          OR: [
+            { notification_to: req.query.notification_to },
+            { notification_to: 'ALL' },
+          ],
+        }
+      })
+      res.status(200).json(unreadNotification)
+    } catch (e) {
+      next(createError(e.statusCode, e.message))
+      process.exit(1)
+    }
+  };
+
+  static read = async (req, res, next) => {
+    if (req.session.user === undefined) {
+      res.status(401).json({
+        message: 'Unauthorized!'
+      })
+      return
+    }
+
+    try {
+      const readNotification = await prisma.notification.update({
         where: {
           id: req.params.id
-        }
-      })
-      res.status(200).json(showProgram)
-    } catch (e) {
-      next(createError(e.statusCode, e.message))
-      process.exit(1)
-    }
-  };
-  
-  static create = async (req, res, next) => {
-    if (req.session.user === undefined) {
-      res.status(401).json({
-        message: 'Unauthorized!'
-      })
-      return
-    }
-
-    try {
-      const createProgram = await prisma.program.create({
+        },
         data: {
-          title: req.body.title,
-          description: req.body.description,
-          user_id: req.body.user_id
+          read: true
         }
       })
-
-      // add notification for creating program
-      const createNotification = await prisma.notification.create({
-        data: {
-          type: 'ADD_PROGRAMS',
-          message: `There is a new program titled - ${req.body.title}`,
-          routeId: createProgram.id,
-          notification_to: 'FARMERS',
-          notification_from_id: req.body.user_id
-        }
-      })
-
-      res.status(200).json({
-        program: createProgram,
-        notification: createNotification
-      })
+      res.status(200).json(readNotification)
     } catch (e) {
       next(createError(e.statusCode, e.message))
       process.exit(1)
@@ -102,4 +93,4 @@ class ProgramsController {
   };
 };
 
-module.exports = ProgramsController;
+module.exports = NotificationsController;

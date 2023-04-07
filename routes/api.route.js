@@ -16,6 +16,7 @@ const CropsController = require('../controllers/crops.controller')
 const ProgramsController = require('../controllers/programs.controller');
 const ReportsController = require('../controllers/reports.controller');
 const RatesController = require('../controllers/rates.controller');
+const NotificationsController = require('../controllers/notifications.controller');
 
 router.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
@@ -36,12 +37,14 @@ router.put('/delete-account/:id', session, UserController.deleteAccount);
 
 // Crops Routes
 router.get('/crops', session, CropsController.index);
+router.get('/crop/:id', session, CropsController.show);
 router.get('/suggested-crops', session, CropsController.suggestedCrops);
 router.post('/create-crop', session, CropsController.create);
 router.put('/update-crop/:id', session, CropsController.update);
 
 // Programs Routes
 router.get('/programs', session, ProgramsController.index);
+router.get('/program/:id', session, ProgramsController.show);
 router.post('/create-program', session, ProgramsController.create);
 
 // Reports Routes
@@ -51,5 +54,10 @@ router.post('/create-report', session, ReportsController.create);
 // Rates Routes
 router.get('/rates', session, RatesController.index);
 router.post('/submit-rate', session, RatesController.create);
+
+// Notifications Routes
+router.get('/notifications', session, NotificationsController.index);
+router.get('/unread-notifications', session, NotificationsController.unreadCount);
+router.put('/read-notification/:id', session, NotificationsController.read);
 
 module.exports = router;

@@ -42,6 +42,27 @@ class CropsContoller {
     }
   };
 
+  static show = async (req, res, next) => {
+    if (req.session.user === undefined) {
+      res.status(401).json({
+        message: 'Unauthorized!'
+      })
+      return
+    }
+
+    try {
+      const showCrop = await prisma.crops.findFirst({
+        where: {
+          id: req.params.id
+        }
+      })
+      res.status(200).json(showCrop)
+    } catch (e) {
+      next(createError(e.statusCode, e.message))
+      process.exit(1)
+    }
+  };
+
   static suggestedCrops = async (req, res, next) => {
     if (req.session.user === undefined) {
       res.status(401).json({
@@ -83,7 +104,22 @@ class CropsContoller {
           user_id: req.body.user_id
         }
       })
-      res.status(200).json(createCrop)
+
+      // add notification for creating crop
+      const createNotification = await prisma.notification.create({
+        data: {
+          type: 'ADD_CROPS',
+          message: `New crop created - ${req.body.name}`,
+          routeId: createCrop.id,
+          notification_to: 'ALL',
+          notification_from_id: req.body.user_id
+        }
+      })
+
+      res.status(200).json({
+        crop: createCrop,
+        notificaition: createNotification
+      })
     } catch (e) {
       next(createError(e.statusCode, e.message))
       process.exit(1)

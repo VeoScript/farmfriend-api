@@ -58,7 +58,22 @@ class ReportsController {
 					user_id: req.body.user_id
         }
       })
-      res.status(200).json(createReport)
+
+      // add notification for creating report
+      const createNotification = await prisma.notification.create({
+        data: {
+          type: 'ADD_REPORTS',
+          message: `Check it out this new report - ${req.body.type}`,
+          routeId: createReport.id,
+          notification_to: 'ADMIN',
+          notification_from_id: req.body.user_id
+        }
+      })
+
+      res.status(200).json({
+        report: createReport,
+        notification: createNotification
+      })
     } catch (e) {
       next(createError(e.statusCode, e.message))
       process.exit(1)

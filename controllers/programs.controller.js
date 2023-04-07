@@ -91,6 +91,17 @@ class ProgramsController {
         }
       })
 
+      const io = req.app.get('socketio_global')
+
+      // socket.io trigger push notification in client-side
+      io.emit('new_notification', {
+        id: createNotification.id,
+        notification_to: 'FARMERS',
+        account_type: req.session.user.account_type,
+        title: 'FarmFriend',
+        message: `There is a new program titled - ${req.body.title}`
+      })
+
       res.status(200).json({
         program: createProgram,
         notification: createNotification

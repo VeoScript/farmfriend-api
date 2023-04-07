@@ -15,6 +15,7 @@ const UserController = require('../controllers/user.controller');
 const CropsController = require('../controllers/crops.controller')
 const ProgramsController = require('../controllers/programs.controller');
 const ReportsController = require('../controllers/reports.controller');
+const RatesController = require('../controllers/rates.controller');
 
 router.get('/', async (req, res, next) => {
   res.send({ message: 'Ok api is working 🚀' });
@@ -46,5 +47,9 @@ router.post('/create-program', session, ProgramsController.create);
 // Reports Routes
 router.get('/reports', session, ReportsController.index);
 router.post('/create-report', session, ReportsController.create);
+
+// Rates Routes
+router.get('/rates', session, RatesController.index);
+router.post('/submit-rate', session, RatesController.create);
 
 module.exports = router;

@@ -70,6 +70,17 @@ class ReportsController {
         }
       })
 
+      const io = req.app.get('socketio_global')
+
+      // socket.io trigger push notification in client-side
+      io.emit('new_notification', {
+        id: createNotification.id,
+        notification_to: 'ADMIN',
+        account_type: req.session.user.account_type,
+        title: 'FarmFriend',
+        message: `Check it out this new report - ${req.body.type}`
+      })
+
       res.status(200).json({
         report: createReport,
         notification: createNotification

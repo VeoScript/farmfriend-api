@@ -116,6 +116,17 @@ class CropsContoller {
         }
       })
 
+      const io = req.app.get('socketio_global')
+
+      // socket.io trigger push notification in client-side
+      io.emit('new_notification', {
+        id: createNotification.id,
+        notification_to: 'ALL',
+        account_type: req.session.user.account_type,
+        title: 'FarmFriend',
+        message: `New crop created - ${req.body.name}`
+      })
+
       res.status(200).json({
         crop: createCrop,
         notificaition: createNotification

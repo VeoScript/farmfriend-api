@@ -109,6 +109,7 @@ class AuthController {
         },
         select: {
           id: true,
+          account_type: true,
           email: true,
           password: true
         }
@@ -121,6 +122,7 @@ class AuthController {
       }
 
       const userId = foundUser[0].id
+      const accountType = foundUser[0].account_type
       const userHashPassword = foundUser[0].password
 
       const matchedPassword = await bcrypt.compare(password, userHashPassword)
@@ -131,7 +133,7 @@ class AuthController {
         })
       }
 
-      req.session.user = { id: userId }
+      req.session.user = { id: userId, account_type: accountType }
 
       await req.session.save();
       

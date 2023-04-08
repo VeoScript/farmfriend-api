@@ -9,26 +9,11 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server)
 
-// app.use(cors({
-//   origin: ['*', 'http://localhost:3000'],
-//   optionsSuccessStatus: 200,
-//   credentials: true
-// }))
-
-const allowedOriginsArray = ["*", "http://localhost:3000"]
-
-app.all("/*", (req, res, next) => {
-  // Return only one origin from your allowed origins
-  const origin = req.headers.origin || "";
-  const exactOrigin = allowedOriginsArray.indexOf(origin) >= 0 ? origin : allowedOriginsArray[0];
-  res.header("Access-Control-Allow-Origin", exactOrigin);
-  res.header(
-      "Access-Control-Allow-Headers",
-      "Access-Control-Allow-Credentials",
-      "Origin, X-Requested-With,Content-Type"
-      // add other headers you want here
-  );
-});
+app.use(cors({
+  origin: ['*', 'http://localhost:3000'],
+  optionsSuccessStatus: 200,
+  credentials: true
+}))
 
 // socket.io server-side configuration... (para ni sa pag distribute ug socket.io sa tanang api-routes/controllers)
 app.set('socketio_global', io)

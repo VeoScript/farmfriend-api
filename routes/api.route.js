@@ -7,6 +7,7 @@ var session = ironSession({
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
     sameSite: 'lax',
+    httpOnly: true
   },
 });
 

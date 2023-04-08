@@ -6,9 +6,7 @@ var session = ironSession({
   cookieName: "farmfriend",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",
-    domain: process.env.NODE_ENV === "production" ? 'vercel.app' : '',
-    sameSite: 'lax',
-    httpOnly: true
+    sameSite: 'lax'
   },
 });
 

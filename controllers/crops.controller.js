@@ -1,8 +1,8 @@
-const createError = require("http-errors");
-require('express-async-errors');
+const createError = require('http-errors')
+require('express-async-errors')
 
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 
 class CropsContoller {
   static index = async (req, res, next) => {
@@ -34,13 +34,13 @@ class CropsContoller {
 
       res.status(200).json({
         crops,
-        nextId:  crops.length === limit ? crops[limit - 1].id : undefined
+        nextId: crops.length === limit ? crops[limit - 1].id : undefined
       })
     } catch (e) {
       next(createError(e.statusCode, e.message))
       process.exit(1)
     }
-  };
+  }
 
   static show = async (req, res, next) => {
     if (req.session.user === undefined) {
@@ -61,7 +61,7 @@ class CropsContoller {
       next(createError(e.statusCode, e.message))
       process.exit(1)
     }
-  };
+  }
 
   static suggestedCrops = async (req, res, next) => {
     if (req.session.user === undefined) {
@@ -84,8 +84,8 @@ class CropsContoller {
       next(createError(e.statusCode, e.message))
       process.exit(1)
     }
-  };
-  
+  }
+
   static create = async (req, res, next) => {
     if (req.session.user === undefined) {
       res.status(401).json({
@@ -111,7 +111,7 @@ class CropsContoller {
           type: 'ADD_CROPS',
           message: `New crop created - ${req.body.name}`,
           routeId: createCrop.id,
-          notification_to: 'ALL',
+          notification_to: 'ADMIN',
           notification_from_id: req.body.user_id
         }
       })
@@ -121,7 +121,7 @@ class CropsContoller {
       // socket.io trigger push notification in client-side
       io.emit('new_notification', {
         id: createNotification.id,
-        notification_to: 'ALL',
+        notification_to: 'ADMIN',
         account_type: req.session.user.account_type,
         title: 'FarmFriend',
         message: `New crop created - ${req.body.name}`
@@ -135,7 +135,7 @@ class CropsContoller {
       next(createError(e.statusCode, e.message))
       process.exit(1)
     }
-  };
+  }
 
   static update = async (req, res, next) => {
     if (req.session.user === undefined) {
@@ -162,7 +162,7 @@ class CropsContoller {
       next(createError(e.statusCode, e.message))
       process.exit(1)
     }
-  };
-};
+  }
+}
 
-module.exports = CropsContoller;
+module.exports = CropsContoller

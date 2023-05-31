@@ -112,6 +112,7 @@ class AuthController {
         select: {
           id: true,
           account_type: true,
+          verified: true,
           email: true,
           password: true
         }

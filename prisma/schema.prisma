@@ -14,12 +14,13 @@ datasource db {
 model User {
   id                    String              @id                         @default(cuid())
   account_type          AccountType                                     @default(ADMIN)
+  verified              Boolean?                                        @default(false)
   image                 String?             @db.LongText
   first_name            String              @db.MediumText
   last_name             String              @db.MediumText
   address               String              @db.LongText
   contact_num           String
-  email                 String
+  email                 String              @unique
   password              String
   created_at            DateTime            @db.DateTime(6)             @default(now())
   updated_at            DateTime            @db.DateTime(6)             @default(now())

@@ -22,6 +22,7 @@ class AuthController {
         select: {
           id: true,
           account_type: true,
+          verified: true,
           image: true,
           first_name: true,
           last_name: true,
@@ -80,6 +81,7 @@ class AuthController {
       await prisma.user.create({
         data: {
           account_type,
+          verified: account_type !== 'LGU_NGO' ? true : false,
           first_name,
           last_name,
           address,
@@ -103,7 +105,7 @@ class AuthController {
     try {
       const { email, password } = req.body
   
-      const foundUser = await prisma.user.findMany({
+      const foundUser = await prisma.user.findUnique({
         where: {
           email: email
         },
@@ -115,15 +117,21 @@ class AuthController {
         }
       })
   
-      if (!foundUser[0]) {
+      if (!foundUser) {
         return res.status(400).json({
           message: 'Account not found, create account first.'
         })
       }
 
-      const userId = foundUser[0].id
-      const accountType = foundUser[0].account_type
-      const userHashPassword = foundUser[0].password
+      if (!foundUser.verified) {
+        return res.status(400).json({
+          message: 'You are not verified as LGU. Wait for the admin to verify your account.'
+        })
+      }
+
+      const userId = foundUser.id
+      const accountType = foundUser.account_type
+      const userHashPassword = foundUser.password
 
       const matchedPassword = await bcrypt.compare(password, userHashPassword)
 

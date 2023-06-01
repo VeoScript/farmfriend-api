@@ -41,6 +41,7 @@ router.get('/crop/:id', session, CropsController.show);
 router.get('/suggested-crops', session, CropsController.suggestedCrops);
 router.post('/create-crop', session, CropsController.create);
 router.put('/update-crop/:id', session, CropsController.update);
+router.delete('/delete-crop/:id', session, CropsController.delete);
 
 // Programs Routes
 router.get('/programs', session, ProgramsController.index);

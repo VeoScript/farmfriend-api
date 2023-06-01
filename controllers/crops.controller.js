@@ -163,6 +163,27 @@ class CropsContoller {
       process.exit(1)
     }
   }
+
+  static delete = async (req, res, next) => {
+    if (req.session.user === undefined) {
+      res.status(401).json({
+        message: 'Unauthorized!'
+      })
+      return
+    }
+
+    try {
+      const deleteCrop = await prisma.crops.delete({
+        where: {
+          id: req.params.id
+        }
+      })
+      res.status(200).json(deleteCrop)
+    } catch (e) {
+      next(createError(e.statusCode, e.message))
+      process.exit(1)
+    }
+  }
 }
 
 module.exports = CropsContoller

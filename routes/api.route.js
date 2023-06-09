@@ -39,6 +39,7 @@ router.put('/delete-account/:id', session, UserController.deleteAccount);
 router.get('/crops', session, CropsController.index);
 router.get('/crop/:id', session, CropsController.show);
 router.get('/suggested-crops', session, CropsController.suggestedCrops);
+router.get('/automated-suggested-crops', session, CropsController.suggestedCropsAutomated);
 router.post('/create-crop', session, CropsController.create);
 router.put('/update-crop/:id', session, CropsController.update);
 router.delete('/delete-crop/:id', session, CropsController.delete);

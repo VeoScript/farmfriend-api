@@ -86,6 +86,33 @@ class CropsContoller {
     }
   }
 
+  static suggestedCropsAutomated = async (req, res, next) => {
+    try {
+      const { currentTemp, currentAverageTemp } = req.query
+
+      const idGenerator = Math.floor(Math.random() * 10000)
+
+      const suggestedCropsAutomated = await prisma.crops.findMany()
+
+      const suggestedCropsResults = suggestedCropsAutomated.filter((crop) => Number(crop.temperature) >= Math.min(currentTemp, currentAverageTemp) && Number(crop.temperature) <= Math.max(currentTemp, currentAverageTemp))
+
+      const io = req.app.get('socketio_global')
+
+      // socket.io trigger push notification in client-side
+      io.emit('automated_notification', {
+        id: String(idGenerator),
+        notification_to: 'ADMIN',
+        title: 'FarmFriend',
+        message: `Daily Suggested Crops ${`${suggestedCropsResults[0].name}, ${suggestedCropsResults[1].name}, and ${suggestedCropsResults[2].name}`}. See other suggestions.`
+      })
+
+      res.status(200).json(suggestedCropsResults)
+    } catch (e) {
+      next(createError(e.statusCode, e.message))
+      process.exit(1)
+    }
+  }
+
   static create = async (req, res, next) => {
     if (req.session.user === undefined) {
       res.status(401).json({

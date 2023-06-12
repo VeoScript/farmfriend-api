@@ -94,7 +94,7 @@ class CropsContoller {
 
       const suggestedCropsAutomated = await prisma.crops.findMany()
 
-      const suggestedCropsResults = suggestedCropsAutomated.filter((crop) => Number(crop.temperature) >= Math.min(currentTemp, currentAverageTemp) && Number(crop.temperature) <= Math.max(currentTemp, currentAverageTemp))
+      const suggestedCropsResults = suggestedCropsAutomated.filter((crop) => (currentTemp <= Number(crop.temperature) && Number(crop.temperature) <= currentAverageTemp || currentTemp <= Number(crop.max_temperature) && Number(crop.max_temperature) <= currentAverageTemp))
 
       const io = req.app.get('socketio_global')
 
@@ -128,6 +128,7 @@ class CropsContoller {
           name: req.body.name,
           description: req.body.description,
           temperature: req.body.temperature,
+          max_temperature: req.body.max_temperature,
           user_id: req.body.user_id
         }
       })
@@ -181,7 +182,8 @@ class CropsContoller {
           image: req.body.photo,
           name: req.body.name,
           description: req.body.description,
-          temperature: req.body.temperature
+          temperature: req.body.temperature,
+          max_temperature: req.body.max_temperature,
         }
       })
       res.status(200).json(createCrop)

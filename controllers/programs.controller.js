@@ -24,6 +24,22 @@ class ProgramsController {
             contains: req.query.search
           }
         },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          created_at: true,
+          updated_at: true,
+          user_id: true,
+          user: {
+            select: {
+              image: true,
+              first_name: true,
+              last_name: true,
+              address: true,
+            }
+          },
+        },
         orderBy: {
           created_at: 'desc'
         },
@@ -54,7 +70,23 @@ class ProgramsController {
       const showProgram = await prisma.program.findFirst({
         where: {
           id: req.params.id
-        }
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          created_at: true,
+          updated_at: true,
+          user_id: true,
+          user: {
+            select: {
+              image: true,
+              first_name: true,
+              last_name: true,
+              address: true,
+            }
+          },
+        },
       })
       res.status(200).json(showProgram)
     } catch (e) {

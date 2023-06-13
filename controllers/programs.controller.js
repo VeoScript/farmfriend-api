@@ -112,8 +112,8 @@ class ProgramsController {
         }
       })
 
-      // add notification for creating program
-      const createNotification = await prisma.notification.create({
+      // add notification for creating program (FARMERS)
+      const createNotificationFarmer = await prisma.notification.create({
         data: {
           type: 'ADD_PROGRAMS',
           message: `There is a new program titled - ${req.body.title}`,
@@ -123,9 +123,20 @@ class ProgramsController {
         }
       })
 
+      // add notification for creating program (LGU/NGO)
+      const createNotificationLgu = await prisma.notification.create({
+        data: {
+          type: 'ADD_PROGRAMS',
+          message: `There is a new program titled - ${req.body.title}`,
+          routeId: createProgram.id,
+          notification_to: 'LGU_NGO',
+          notification_from_id: req.body.user_id
+        }
+      })
+
       const io = req.app.get('socketio_global')
 
-      // socket.io trigger push notification in client-side
+      // socket.io trigger push notification in client-side (FARMERS)
       io.emit('new_notification', {
         id: createNotification.id,
         notification_to: 'FARMERS',
@@ -134,9 +145,19 @@ class ProgramsController {
         message: `There is a new program titled - ${req.body.title}`
       })
 
+      // socket.io trigger push notification in client-side (LGU/NGO)
+      io.emit('new_notification', {
+        id: createNotification.id,
+        notification_to: 'LGU_NGO',
+        account_type: req.session.user.account_type,
+        title: 'FarmFriend',
+        message: `There is a new program titled - ${req.body.title}`
+      })
+
       res.status(200).json({
         program: createProgram,
-        notification: createNotification
+        notificationFarmer: createNotificationFarmer,
+        createNotificationLgu: createNotificationLgu,
       })
     } catch (e) {
       next(createError(e.statusCode, e.message))

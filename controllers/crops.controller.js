@@ -98,12 +98,12 @@ class CropsContoller {
 
       const io = req.app.get('socketio_global')
 
-      // socket.io trigger push notification in client-side
+      // socket.io trigger automated push notification in client-side
       io.emit('automated_notification', {
         id: String(idGenerator),
-        notification_to: 'ADMIN',
+        notification_to: 'ALL',
         title: 'FarmFriend',
-        message: `Daily Suggested Crops ${`${suggestedCropsResults[0].name}, ${suggestedCropsResults[1].name}, and ${suggestedCropsResults[2].name}`}. See other suggestions.`
+        message: `Daily Suggested Crops: ${`${suggestedCropsResults[0].name}, ${suggestedCropsResults[1].name}, and ${suggestedCropsResults[2].name}`}.`
       })
 
       res.status(200).json(suggestedCropsResults)
